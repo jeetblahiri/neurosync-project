@@ -133,6 +133,10 @@ async def llm_curation(articles: List[Article]) -> tuple[List[Article], str]:
         return articles[:50], f"Neural uplink unstable. Protocol error: {str(e)[:50]}..."
 
 # --- ENDPOINTS ---
+@app.get("/")
+def health_check():
+    return {"status": "online", "system": "NeuroSync Cortex"}
+
 @app.get("/feed", response_model=FeedResponse)
 async def get_feed(background_tasks: BackgroundTasks):
     global cache
