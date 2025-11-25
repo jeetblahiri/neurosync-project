@@ -151,14 +151,17 @@ def generate_synthesis_raw_http(articles: List[Article]):
     if not API_KEY:
         return "Synthesis Offline: API Key missing."
 
-    titles = "\n".join([f"- {a.title}" for a in articles[:20]])
+    titles = "\n".join([f"- {a.title}" for a in articles[:30]])
     prompt = f"""
-    You are the "Cortex" of a BCI research dashboard. 
-    Here is a list of incoming data streams (papers and news):
+    You are a research assistant for a neurotechnology lab.
+    Here is a list of the latest scientific papers and industry news regarding Brain-Computer Interfaces (BCI) and Neurofeedback:
     {titles}
-    TASK: Write a high-level, sci-fi style "Daily Synthesis" (max 80 words). 
-    Focus on the convergence of biology and machine. Use terms like "Signal detected," "Trajectory," "Neural integration."
-    Do NOT use bullet points. Write it as a single briefing paragraph.
+    
+    TASK: Synthesize these titles into a comprehensive two-paragraph overview. 
+    - Paragraph 1: Focus on the academic research trends (new methods, algorithms, or clinical applications found in the papers).
+    - Paragraph 2: Focus on the industry news and broader implications (hardware updates, startups, or societal impact).
+    
+    Write in a professional, clear, and informative tone suitable for a scientist. Avoid sci-fi jargon.
     """
 
     # 1. Find a valid model name
