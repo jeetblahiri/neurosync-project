@@ -19,7 +19,7 @@ import {
 
 // --- CONFIGURATION ---
 // In production, this would be your deployed backend URL (e.g., https://neurosync-api.onrender.com)
-const BACKEND_URL = "http://127.0.0.1:8000";
+const BACKEND_URL = "https://neurosync-project.onrender.com";
 
 // --- COMPONENTS ---
 
