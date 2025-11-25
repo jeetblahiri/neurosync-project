@@ -3,6 +3,6 @@ uvicorn
 pydantic
 arxiv
 duckduckgo-search
-google-generativeai
+google-generativeai>=0.7.2
 python-multipart
 requests

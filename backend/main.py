@@ -9,13 +9,14 @@ import arxiv
 from duckduckgo_search import DDGS
 import uvicorn
 import google.generativeai as genai
+from google.api_core import exceptions
 
 # --- CONFIGURATION ---
 API_KEY = os.getenv("LLM_API_KEY", "") 
 
-# Configure Gemini
+# Configure Gemini with REST transport to avoid gRPC errors on Render
 if API_KEY:
-    genai.configure(api_key=API_KEY)
+    genai.configure(api_key=API_KEY, transport='rest')
 
 app = FastAPI(title="NeuroSync Cortex")
 
@@ -120,17 +121,20 @@ async def llm_curation(articles: List[Article]) -> tuple[List[Article], str]:
     Do NOT use bullet points. Write it as a single briefing paragraph.
     """
 
-    try:
-        # Use Gemini 1.5 Flash (Fast & Free Tier available)
-        model = genai.GenerativeModel('gemini-1.5-flash')
-        response = model.generate_content(prompt)
-        
-        synthesis = response.text.strip()
-        return articles[:50], synthesis
-        
-    except Exception as e:
-        print(f"LLM Error: {e}")
-        return articles[:50], f"Neural uplink unstable. Protocol error: {str(e)[:50]}..."
+    # Model Fallback Chain
+    models_to_try = ['gemini-1.5-flash', 'gemini-1.5-flash-latest', 'gemini-pro']
+    
+    for model_name in models_to_try:
+        try:
+            model = genai.GenerativeModel(model_name)
+            response = model.generate_content(prompt)
+            synthesis = response.text.strip()
+            return articles[:50], synthesis
+        except Exception as e:
+            print(f"Model {model_name} failed: {e}")
+            continue
+
+    return articles[:50], "Neural uplink unstable. All AI models unresponsive."
 
 # --- ENDPOINTS ---
 @app.get("/")
